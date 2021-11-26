@@ -44,6 +44,7 @@ class _signinState extends State<signin> {
   void dispose() {
     phone.dispose();
     super.dispose();
+    // _timer.dispose();
   }
 
   @override

@@ -52,16 +52,16 @@ void storeTokenAndData(UserCredential userCredential) async {
     User? user = FirebaseAuth.instance.currentUser;
     String uid = user!.uid;
     var time = DateTime.now().add(Duration(hours: i + 1)).toString();
-    await FirebaseFirestore.instance
-        .collection('tasks')
-        .doc(uid)
-        .collection('mytasks')
-        .doc(time)
-        .set({
-      'title': "Demo Title",
-      'description': "demo description",
-      'time': time,
-    });
+    // await FirebaseFirestore.instance
+    //     .collection('tasks')
+    //     .doc(uid)
+    //     .collection('mytasks')
+    //     .doc(time)
+    //     .set({
+    //   'title': "Demo Title",
+    //   'description': "demo description",
+    //   'time': time,
+    // });
   }
   sharedPreferences.setString(
       "token", userCredential.credential?.token.toString() ?? " ");

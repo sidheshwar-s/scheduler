@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:scheduler_flutter/Signin.dart';
+import 'package:scheduler_flutter/addtask.dart';
+import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,7 +24,7 @@ class home extends StatefulWidget {
 }
 
 class _homeState extends State<home> {
-  // List<QueryDocumentSnapshot<Object?>>? docs1;
+  List<QueryDocumentSnapshot<Object?>>? docs1;
   String uid = "";
   getuid() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -92,8 +94,8 @@ class _homeState extends State<home> {
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.black,
           onPressed: () {
-            // Navigator.push(
-            //     context, MaterialPageRoute(builder: (context) => addtask()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => addtask()));
           },
           icon: Icon(Icons.add),
           label:
@@ -105,133 +107,132 @@ class _homeState extends State<home> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('tasks')
+              .doc(uid)
+              .collection('mytasks')
+              .orderBy("time", descending: false)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              docs1 = snapshot.data?.docs;
 
-        //  StreamBuilder<QuerySnapshot>(
-        //   stream: FirebaseFirestore.instance
-        //       .collection('tasks')
-        //       .doc(uid)
-        //       .collection('mytasks')
-        //       .orderBy("time", descending: false)
-        //       .snapshots(),
-        //   builder: (context, snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return Center(
-        //         child: CircularProgressIndicator(),
-        //       );
-        //     } else {
-        //       docs1 = snapshot.data?.docs;
+              int t = docs1!.length;
+              return ListView.builder(
+                itemCount: docs1!.length,
+                itemBuilder: (context, index) {
+                  if (DateTime.now()
+                          .compareTo(DateTime.parse(docs1?[index]['time'])) >
+                      0) {
+                    FirebaseFirestore.instance
+                        .collection('tasks')
+                        .doc(uid)
+                        .collection('mytasks')
+                        .doc(docs1?[index]['time'])
+                        .delete()
+                        .then((value) => print("success"));
+                  }
+                  var time = DateTime.parse(docs1![index]['time']);
+                  for (int i = 0; i < docs1!.length.toInt(); i++) {
+                    _showNotification(
+                        DateTime.parse(docs1![i]['time']), docs1![i]['title']);
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Card(
+                          semanticContainer: true,
+                          color: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          margin: EdgeInsets.only(bottom: 10),
+                          // decoration: BoxDecoration(
+                          //     color: Colors.blue,
+                          //     borderRadius: BorderRadius.circular(10)),
+                          // height: 90,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                        margin: EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          "Title : ${docs1![index]['title']}",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                        width: 320,
+                                        margin: EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          "Description : ${docs1![index]['description']}",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 20),
+                                      child: Text(
+                                        DateFormat.yMd().add_jm().format(time),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
 
-        //       int t = docs1!.length;
-        //       return ListView.builder(
-        //         itemCount: docs1!.length,
-        //         itemBuilder: (context, index) {
-        //           if (DateTime.now()
-        //                   .compareTo(DateTime.parse(docs1?[index]['time'])) >
-        //               0) {
-        //             FirebaseFirestore.instance
-        //                 .collection('tasks')
-        //                 .doc(uid)
-        //                 .collection('mytasks')
-        //                 .doc(docs1?[index]['time'])
-        //                 .delete()
-        //                 .then((value) => print("success"));
-        //           }
-        //           var time = DateTime.parse(docs1![index]['time']);
-        //           for (int i = 0; i < docs1!.length.toInt(); i++) {
-        //             _showNotification(
-        //                 DateTime.parse(docs1![i]['time']), docs1![i]['title']);
-        //           }
-        //           return Padding(
-        //             padding: const EdgeInsets.all(8),
-        //             child: SizedBox(
-        //               width: MediaQuery.of(context).size.width / 2,
-        //               child: InkWell(
-        //                 onTap: () {},
-        //                 child: Card(
-        //                   semanticContainer: true,
-        //                   color: Colors.blue,
-        //                   shape: RoundedRectangleBorder(
-        //                     borderRadius: BorderRadius.circular(15.0),
-        //                   ),
-        //                   margin: EdgeInsets.only(bottom: 10),
-        //                   // decoration: BoxDecoration(
-        //                   //     color: Colors.blue,
-        //                   //     borderRadius: BorderRadius.circular(10)),
-        //                   // height: 90,
-        //                   child: Row(
-        //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //                     children: [
-        //                       Column(
-        //                           mainAxisAlignment: MainAxisAlignment.center,
-        //                           crossAxisAlignment: CrossAxisAlignment.start,
-        //                           children: [
-        //                             SizedBox(
-        //                               height: 10,
-        //                             ),
-        //                             Container(
-        //                                 margin: EdgeInsets.only(left: 20),
-        //                                 child: Text(
-        //                                   "Title : ${docs1![index]['title']}",
-        //                                   style: TextStyle(
-        //                                       color: Colors.white,
-        //                                       fontWeight: FontWeight.bold),
-        //                                 )),
-        //                             SizedBox(
-        //                               height: 10,
-        //                             ),
-        //                             Container(
-        //                                 width: 320,
-        //                                 margin: EdgeInsets.only(left: 20),
-        //                                 child: Text(
-        //                                   "Description : ${docs1![index]['description']}",
-        //                                   style: TextStyle(
-        //                                       color: Colors.white,
-        //                                       fontWeight: FontWeight.bold),
-        //                                 )),
-        //                             SizedBox(
-        //                               height: 10,
-        //                             ),
-        //                             Container(
-        //                               margin: EdgeInsets.only(left: 20),
-        //                               child: Text(
-        //                                 DateFormat.yMd().add_jm().format(time),
-        //                                 style: TextStyle(
-        //                                     color: Colors.white,
-        //                                     fontWeight: FontWeight.bold),
-        //                               ),
-
-        //                               // DateFormat.yMd().add_jm().format(time)));
-        //                             ),
-        //                             SizedBox(
-        //                               height: 10,
-        //                             ),
-        //                           ]),
-        //                       Container(
-        //                           child: IconButton(
-        //                               icon: Icon(
-        //                                 Icons.delete,
-        //                               ),
-        //                               onPressed: () async {
-        //                                 print(docs1![index]['time']);
-        //                                 await FirebaseFirestore.instance
-        //                                     .collection('tasks')
-        //                                     .doc(uid)
-        //                                     .collection('mytasks')
-        //                                     .doc(docs1![index]['time'])
-        //                                     .delete()
-        //                                     .then((value) => print("success"));
-        //                               }))
-        //                     ],
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //           );
-        //         },
-        //       );
-        //     }
-        //   },
-        // ),
+                                      // DateFormat.yMd().add_jm().format(time)));
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ]),
+                              Container(
+                                  child: IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                      ),
+                                      onPressed: () async {
+                                        print(docs1![index]['time']);
+                                        await FirebaseFirestore.instance
+                                            .collection('tasks')
+                                            .doc(uid)
+                                            .collection('mytasks')
+                                            .doc(docs1![index]['time'])
+                                            .delete()
+                                            .then((value) => print("success"));
+                                      }))
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }
