@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "269515968036",
+    "firebase_url": "https://scheduler-bf29c-default-rtdb.firebaseio.com",
+    "project_id": "scheduler-bf29c",
+    "storage_bucket": "scheduler-bf29c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:269515968036:android:c1df91e1d02fba957212b1",
+        "android_client_info": {
+          "package_name": "com.scheduler.scheduler_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "269515968036-oudj1lt2agutps31m961fjur5ur09vte.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDB67bFWeE69p87knVFIctQ5-PUpnwMgWE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "269515968036-oudj1lt2agutps31m961fjur5ur09vte.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
