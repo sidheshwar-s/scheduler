@@ -8,6 +8,8 @@ import 'dart:async';
 // import 'config.dart';
 
 import 'dart:convert';
+
+import 'package:scheduler_flutter/home.dart';
 // import 'home.dart';
 
 class MyBottomBarDemo extends StatefulWidget {
@@ -20,7 +22,7 @@ class _MyBottomBarDemoState extends State<MyBottomBarDemo> {
   PageController _pageController = PageController();
 
   List<Widget> tabPages = [
-    // home(),
+    home(),
     // calender(),
   ];
 
