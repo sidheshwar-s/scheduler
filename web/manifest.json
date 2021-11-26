@@ -1,6 +1,6 @@
 {
-    "name": "scheduler",
-    "short_name": "scheduler",
+    "name": "scheduler_flutter",
+    "short_name": "scheduler_flutter",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
