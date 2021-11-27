@@ -37,7 +37,6 @@ class _MyBottomBarDemoState extends State<MyBottomBarDemo> {
         backgroundColor: Colors.black,
         onTap: onTabTapped,
         height: 50,
-        // backgroundColor: Colors.white,
         items: [
           Icon(Icons.home),
           Icon(Icons.video_library_rounded),

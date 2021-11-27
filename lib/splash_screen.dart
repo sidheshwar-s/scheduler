@@ -68,6 +68,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void changeRoute() async {
     Future.delayed(Duration(seconds: 3))
-        .whenComplete(() => Get.offAll(MyBottomBarDemo()));
+        .whenComplete(() => Get.offAll(() => MyBottomBarDemo()));
   }
 }
