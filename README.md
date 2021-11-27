@@ -18,3 +18,11 @@ You can download the android application using the following link:
 https://drive.google.com/drive/folders/1yCVJOJJrZAUyoD68_X_8IvCnBOC7LIb-?usp=sharing
 
 
+## List of features integrated during the hack:
+
+
+  * Added media player for motivational videos
+  * Added Firebase Cloud Messaging for push notifications
+  * Added Lottie animations
+
+These were the list of features our team got and we have integrated all three
