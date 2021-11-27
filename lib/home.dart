@@ -155,7 +155,7 @@ class _HomeState extends State<Home> {
               key.currentState?.openDrawer();
             }
           },
-          icon: Icon(Icons.emoji_events, color: Colors.yellow[600], size: 30),
+          icon: Icon(Icons.menu),
         ),
         actions: [
           TextButton(

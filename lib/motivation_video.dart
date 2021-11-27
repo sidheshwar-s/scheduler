@@ -1,36 +1,46 @@
-import 'dart:async';
+import 'package:chewie/chewie.dart';
+import 'package:chewie/src/chewie_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
 import 'package:video_player/video_player.dart';
 
 class MotivationVideo extends StatefulWidget {
-  const MotivationVideo({Key? key}) : super(key: key);
+  MotivationVideo({this.title = 'Chewie Demo'});
+
+  final String title;
 
   @override
-  _MotivationVideoState createState() => _MotivationVideoState();
+  State<StatefulWidget> createState() {
+    return _MotivationVideoState();
+  }
 }
 
 class _MotivationVideoState extends State<MotivationVideo> {
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  TargetPlatform? _platform;
+  VideoPlayerController? _videoPlayerController1;
+  VideoPlayerController? _videoPlayerController2;
+  ChewieController? _chewieController;
 
   @override
   void initState() {
-    _controller = VideoPlayerController.network(
-      "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-    );
-
-    _initializeVideoPlayerFuture = _controller.initialize();
-
-    _controller.setLooping(true);
-
     super.initState();
+    _videoPlayerController1 = VideoPlayerController.network(
+        "https://firebasestorage.googleapis.com/v0/b/scheduler-bf29c.appspot.com/o/Success%20Starts%20In%20Your%20Daily%20Routine!%20-%20Morning%20Motivation.mp4?alt=media&token=a561184f-f613-450b-93ed-b167c2b9651f");
+    _videoPlayerController2 = VideoPlayerController.network(
+        "https://firebasestorage.googleapis.com/v0/b/scheduler-bf29c.appspot.com/o/Success%20Starts%20In%20Your%20Daily%20Routine!%20-%20Morning%20Motivation.mp4?alt=media&token=a561184f-f613-450b-93ed-b167c2b9651f");
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController1!,
+      aspectRatio: 3 / 2,
+      autoPlay: true,
+      looping: true,
+    );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-
+    _videoPlayerController1?.dispose();
+    _videoPlayerController2?.dispose();
+    _chewieController?.dispose();
     super.dispose();
   }
 
@@ -38,38 +48,18 @@ class _MotivationVideoState extends State<MotivationVideo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Get.back(), icon: Icon(Icons.arrow_back)),
-        title: const Text('Butterfly Video'),
+        title: Text(widget.title),
       ),
-      body: FutureBuilder(
-        future: _initializeVideoPlayerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
-              child: VideoPlayer(_controller),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            if (_controller.value.isPlaying) {
-              _controller.pause();
-            } else {
-              _controller.play();
-            }
-          });
-        },
-        child: Icon(
-          _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-        ),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Center(
+              child: Chewie(
+                controller: _chewieController!,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
