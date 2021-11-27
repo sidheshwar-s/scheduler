@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:scheduler_flutter/home.dart';
+import 'package:scheduler_flutter/motivation_video.dart';
 
 class MyBottomBarDemo extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _MyBottomBarDemoState extends State<MyBottomBarDemo> {
 
   List<Widget> tabPages = [
     Home(),
+    MotivationVideo()
     // calender(),
   ];
 
@@ -38,7 +40,7 @@ class _MyBottomBarDemoState extends State<MyBottomBarDemo> {
         // backgroundColor: Colors.white,
         items: [
           Icon(Icons.home),
-          // Icon(Icons.calendar_today_rounded),
+          Icon(Icons.video_library_rounded),
         ],
       ),
       body: PageView(

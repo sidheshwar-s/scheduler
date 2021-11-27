@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:scheduler_flutter/bottomnavigationbar.dart';
 import 'package:scheduler_flutter/home.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -66,6 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void changeRoute() async {
-    Future.delayed(Duration(seconds: 3)).whenComplete(() => Get.offAll(Home()));
+    Future.delayed(Duration(seconds: 3))
+        .whenComplete(() => Get.offAll(MyBottomBarDemo()));
   }
 }

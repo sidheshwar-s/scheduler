@@ -494,10 +494,12 @@ class _HomeState extends State<Home> {
             ),
           ),
           const SizedBox(
-            height: 20,
+            height: 30,
           ),
-          Center(
-            child: Text("HELPPIER", style: TextStyle(color: Colors.grey)),
+          Positioned(
+            child: Center(
+              child: Text("HELPPIER", style: TextStyle(color: Colors.grey)),
+            ),
           ),
         ],
       ),

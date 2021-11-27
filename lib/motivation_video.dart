@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class MotivationVideo extends StatefulWidget {
-  MotivationVideo({this.title = 'Chewie Demo'});
+  MotivationVideo({this.title = 'Motivational Video'});
 
   final String title;
 
@@ -48,14 +48,24 @@ class _MotivationVideoState extends State<MotivationVideo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.black,
         title: Text(widget.title),
       ),
       body: Column(
         children: <Widget>[
           Expanded(
             child: Center(
-              child: Chewie(
-                controller: _chewieController!,
+              child: Container(
+                // height: 400,
+                child: Chewie(
+                  controller: _chewieController!,
+                ),
               ),
             ),
           ),
