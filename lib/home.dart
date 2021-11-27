@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -5,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:scheduler_flutter/Signin.dart';
 import 'package:scheduler_flutter/addtask.dart';
+import 'package:scheduler_flutter/main.dart';
 import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,6 +37,26 @@ class _homeState extends State<home> {
 
   @override
   void initState() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print(message);
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? androidNotification = message.notification?.android;
+      if (notification != null && androidNotification != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+                android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channel.description,
+              color: Colors.blue,
+              playSound: true,
+              icon: '@mipmap/ic_launcher',
+            )));
+      }
+    });
     super.initState();
     getuid();
 
@@ -65,6 +87,22 @@ class _homeState extends State<home> {
         generalNotificationDetails);
   }
 
+  // void testNotify() {
+  //   flutterLocalNotificationsPlugin.show(
+  //       1213,
+  //       "Test",
+  //       "body",
+  //       NotificationDetails(
+  //           android: AndroidNotificationDetails(
+  //         channel.id,
+  //         channel.name,
+  //         channel.description,
+  //         color: Colors.blue,
+  //         playSound: true,
+  //         icon: '@mipmap/ic_launcher',
+  //       )));
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +132,7 @@ class _homeState extends State<home> {
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.black,
           onPressed: () {
+            // testNotify();
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => addtask()));
           },
