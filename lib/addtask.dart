@@ -30,6 +30,8 @@ class _addtaskState extends State<addtask> {
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
   var selectedSchedules = [];
+  int id = 11;
+
   static List<TimeModel?> time = [
     TimeModel(title: "1 hour", time: 60),
     TimeModel(title: "45 mins", time: 45),
@@ -56,8 +58,10 @@ class _addtaskState extends State<addtask> {
         'title': title.text,
         'description': description.text,
         'time': datetime.toString(),
+        'regular': checkedValue,
       });
       // Fluttertoast.showToast(msg: 'Data Added');
+      print(selectedSchedules);
       selectedSchedules.forEach((value) {
         print(value);
         DateTime newTime = datetime.subtract(Duration(minutes: value.time));
@@ -95,24 +99,17 @@ class _addtaskState extends State<addtask> {
     var generalNotificationDetails =
         new NotificationDetails(android: androidDetails, iOS: iSODetails);
     var scheduledTime = t;
-
-    if (isScheduled) {
-      fltrNotification.schedule(
-        1,
-        "Reminder!",
-        "your task with title ${title} will be over within ${endTime.difference(t).inMinutes} minutes",
-        scheduledTime,
-        generalNotificationDetails,
-      );
-      return;
-    }
+    print(isScheduled);
     fltrNotification.schedule(
-      1,
-      "Reminder",
-      "your task with title ${title} has passed at ${t.hour}: ${t.minute}",
+      id,
+      "Reminder!",
+      "${isScheduled ? "task with title ${title} will be over within ${endTime.difference(t).inMinutes} minutes" : "your task with title ${title} has passed at ${t.hour}: ${t.minute}"}",
       scheduledTime,
       generalNotificationDetails,
     );
+    setState(() {
+      id += 1;
+    });
   }
 
   @override
@@ -326,7 +323,7 @@ class _addtaskState extends State<addtask> {
                     });
                   },
                   items: _items,
-                  initialValue: [time[0], time[1], time[2], time[3]],
+                  // initialValue: [time[0], time[1], time[2], time[3]],
                   title: Text("When Do you want reminders",
                       style: TextStyle(
                           fontSize: 16,
