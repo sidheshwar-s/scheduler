@@ -6,19 +6,15 @@ import 'dart:async';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-class signin extends StatefulWidget {
-  const signin({Key? key}) : super(key: key);
+class SignIn extends StatefulWidget {
+  const SignIn({Key? key}) : super(key: key);
 
   @override
-  _signinState createState() => _signinState();
+  _SignInState createState() => _SignInState();
 }
 
-class _signinState extends State<signin> {
+class _SignInState extends State<SignIn> {
   int start = 30;
   bool wait = false;
   String buttoname = "Send";
@@ -89,7 +85,7 @@ class _signinState extends State<signin> {
                           counterText: "",
                           suffixIcon: TextButton(
                             child: Text(
-                              "${buttoname}",
+                              "$buttoname",
                               style: TextStyle(color: Colors.black),
                             ),
                             onPressed: wait
@@ -192,36 +188,39 @@ class _signinState extends State<signin> {
                   Container(
                     height: MediaQuery.of(context).size.height / 17,
                     width: MediaQuery.of(context).size.width / 1.5,
-                    child: RaisedButton(
-                        color: Colors.black,
-                        onPressed: () {
-                          print("***********************");
-                          print(verificationIdFinal);
-                          print("***********************");
-                          print(smsCode);
-                          print("***********************");
-
-                          print("***********************");
-                          signInwithPhoneNumber(
-                              verificationIdFinal, smsCode, context);
-                          // FirebaseAuth _auth = FirebaseAuth.instance;
-                          // signInWithPhoneNumber(
-                          // verificationIdFinal, smsCode, context);
-                        },
-                        child: Container(
-                          color: Colors.black,
-                          child: Text(
-                            "Verify",
-                            style: TextStyle(
-                              fontSize: 25,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.black,
                         shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(30.0),
-                        )),
+                        ),
+                      ),
+                      onPressed: () {
+                        print("***********************");
+                        print(verificationIdFinal);
+                        print("***********************");
+                        print(smsCode);
+                        print("***********************");
+
+                        print("***********************");
+                        signInwithPhoneNumber(
+                            verificationIdFinal, smsCode, context);
+                        // FirebaseAuth _auth = FirebaseAuth.instance;
+                        // signInWithPhoneNumber(
+                        // verificationIdFinal, smsCode, context);
+                      },
+                      child: Container(
+                        color: Colors.black,
+                        child: Text(
+                          "Verify",
+                          style: TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:scheduler_flutter/Signin.dart';
-// import 'package:todo_app/signin.dart';
 
-class startingscreen extends StatefulWidget {
-  const startingscreen({Key? key}) : super(key: key);
+class StartingScreen extends StatefulWidget {
+  const StartingScreen({Key? key}) : super(key: key);
 
   @override
-  _startingscreenState createState() => _startingscreenState();
+  _StartingScreenState createState() => _StartingScreenState();
 }
 
-class _startingscreenState extends State<startingscreen> {
+class _StartingScreenState extends State<StartingScreen> {
   int currentPos = 0;
   int? index;
   CarouselController buttonCarouselController = CarouselController();
@@ -271,34 +269,37 @@ class _startingscreenState extends State<startingscreen> {
             child: Container(
               height: MediaQuery.of(context).size.height / 17,
               width: MediaQuery.of(context).size.width / 1.5,
-              child: RaisedButton(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.black,
+                  shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0),
+                  ),
+                ),
+                onPressed: () {
+                  if (currentPos != 3) {
+                    buttonCarouselController.nextPage(
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.linear);
+                  } else {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SignIn()));
+                  }
+                },
+                child: Container(
                   color: Colors.black,
-                  onPressed: () {
-                    if (currentPos != 3) {
-                      buttonCarouselController.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.linear);
-                    } else {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => signin()));
-                    }
-                  },
-                  child: Container(
-                    color: Colors.black,
-                    child: Text(
-                      "${currentPos != 3 ? "Next" : "Get Started"}",
-                      style: GoogleFonts.amaticSc(
-                        textStyle: TextStyle(
-                          fontSize: 30,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  child: Text(
+                    "${currentPos != 3 ? "Next" : "Get Started"}",
+                    style: GoogleFonts.amaticSc(
+                      textStyle: TextStyle(
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0),
-                  )),
+                ),
+              ),
             ),
           )
         ]);

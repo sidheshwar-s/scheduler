@@ -2,10 +2,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:scheduler_flutter/Signin.dart';
 import 'package:scheduler_flutter/addtask.dart';
 import 'package:scheduler_flutter/main.dart';
+import 'package:scheduler_flutter/motivation_video.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,15 +17,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 final FlutterLocalNotificationsPlugin fltrNotification =
     new FlutterLocalNotificationsPlugin();
 
-// import 'firestore';
-class home extends StatefulWidget {
-  const home({Key? key}) : super(key: key);
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
 
   @override
-  _homeState createState() => _homeState();
+  _HomeState createState() => _HomeState();
 }
 
-class _homeState extends State<home> {
+class _HomeState extends State<Home> {
   List<QueryDocumentSnapshot<Object?>>? docs1;
   String uid = "";
   getuid() async {
@@ -32,10 +34,41 @@ class _homeState extends State<home> {
     });
   }
 
+  int points = 0;
+
+  getPoints() async {
+    var pointsDoc = FirebaseFirestore.instance.collection('points').doc(uid);
+    var cur = await pointsDoc.get();
+    setState(() {
+      points = cur.data()?['points'];
+    });
+  }
+
+  reducePoints(int index) async {
+    await getPoints();
+    var newPoints = points - 1;
+    await FirebaseFirestore.instance
+        .collection('points')
+        .doc(uid)
+        .set({"points": newPoints}).then(
+      (value) => print("reduced points"),
+    );
+    await FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(uid)
+        .collection('mytasks')
+        .doc(docs1![index]['time'])
+        .delete()
+        .then(
+          (value) => print("successfully deleted"),
+        );
+  }
+
+  GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print(message);
       RemoteNotification? notification = message.notification;
       AndroidNotification? androidNotification = message.notification?.android;
       if (notification != null && androidNotification != null) {
@@ -56,6 +89,7 @@ class _homeState extends State<home> {
     });
     super.initState();
     getuid();
+    getPoints();
 
     var androidInitilize =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -77,11 +111,12 @@ class _homeState extends State<home> {
         new NotificationDetails(android: androidDetails, iOS: iSODetails);
     var scheduledTime = t;
     fltrNotification.schedule(
-        1,
-        "Reminder",
-        "your task with title ${title} has passed",
-        scheduledTime,
-        generalNotificationDetails);
+      1,
+      "Oops!",
+      "your missed your task $title ",
+      scheduledTime,
+      generalNotificationDetails,
+    );
   }
 
   // void testNotify() {
@@ -103,6 +138,8 @@ class _homeState extends State<home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: key,
+      drawer: buildDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text(
@@ -110,36 +147,48 @@ class _homeState extends State<home> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            if (key.currentState!.isDrawerOpen) {
+              Navigator.pop(context);
+            } else {
+              key.currentState?.openDrawer();
+            }
+          },
+          icon: Icon(Icons.emoji_events, color: Colors.yellow[600], size: 30),
+        ),
         actions: [
           TextButton(
-              onPressed: () async {
-                SharedPreferences sharedPreferences =
-                    await SharedPreferences.getInstance();
-                sharedPreferences.remove("token");
-                sharedPreferences.remove("usercredential");
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (BuildContext ctx) => signin()));
-              },
-              child: Text(
-                "Logout",
-                style: TextStyle(color: Colors.white),
-              ))
+            onPressed: () async {
+              SharedPreferences sharedPreferences =
+                  await SharedPreferences.getInstance();
+              sharedPreferences.remove("token");
+              sharedPreferences.remove("usercredential");
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (BuildContext ctx) => SignIn()));
+            },
+            child: Text(
+              "Logout",
+              style: TextStyle(color: Colors.white),
+            ),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-          backgroundColor: Colors.black,
-          onPressed: () {
-            // testNotify();
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => addtask()));
-          },
-          icon: Icon(Icons.add),
-          label:
-              // Icon(Icons.add),
-              Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: Text("Add task"),
-          )),
+        backgroundColor: Colors.black,
+        onPressed: () {
+          // testNotify();
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AddTask()));
+        },
+        icon: Icon(Icons.add),
+        label:
+            // Icon(Icons.add),
+            Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: Text("Add task"),
+        ),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('tasks')
@@ -155,7 +204,6 @@ class _homeState extends State<home> {
           } else {
             docs1 = snapshot.data?.docs;
 
-            int t = docs1!.length;
             return ListView.builder(
               itemCount: docs1!.length,
               itemBuilder: (context, index) {
@@ -170,6 +218,7 @@ class _homeState extends State<home> {
                       .doc(docs1?[index]['time'])
                       .delete()
                       .then((value) => print("success"));
+                  reducePoints(index);
                 }
 
                 var time = DateTime.parse(docs1![index]['time']);
@@ -188,7 +237,7 @@ class _homeState extends State<home> {
                           child: Card(
                             semanticContainer: true,
                             color: docs1![index]['regular'] == true
-                                ? Color(0xff5cdb95)
+                                ? Color(0xff457b9d)
                                 : Color(0xffe7717d),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
@@ -202,7 +251,8 @@ class _homeState extends State<home> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width / 2,
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.2,
                                   child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -285,9 +335,27 @@ class _homeState extends State<home> {
                                   .collection('mytasks')
                                   .doc(docs1![index]['time'])
                                   .delete()
-                                  .then((value) => print("success"));
+                                  .then(
+                                    (value) => print("successfully deleted"),
+                                  );
                             } else {
-                              // TODO: mark of complete
+                              getPoints();
+                              var newPoints = points + 1;
+                              await FirebaseFirestore.instance
+                                  .collection('points')
+                                  .doc(uid)
+                                  .set({"points": newPoints}).then(
+                                (value) => print("added points"),
+                              );
+                              await FirebaseFirestore.instance
+                                  .collection('tasks')
+                                  .doc(uid)
+                                  .collection('mytasks')
+                                  .doc(docs1![index]['time'])
+                                  .delete()
+                                  .then(
+                                    (value) => print("successfully deleted"),
+                                  );
                             }
                           },
                           offset: Offset(-15, 5),
@@ -297,24 +365,23 @@ class _homeState extends State<home> {
                               value: "delete",
                               padding: EdgeInsets.only(),
                               child: SizedBox(
-                                child: TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    primary: Colors.black,
-                                  ),
-                                  onPressed: () async {
-                                    print(docs1![index]['time']);
-                                    await FirebaseFirestore.instance
-                                        .collection('tasks')
-                                        .doc(uid)
-                                        .collection('mytasks')
-                                        .doc(docs1![index]['time'])
-                                        .delete()
-                                        .then((value) => print("success"));
-                                  },
-                                  icon: Icon(
-                                    Icons.delete,
-                                  ),
-                                  label: Text("DELETE"),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(
+                                      "DELETE",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Icon(Icons.delete)
+                                  ],
                                 ),
                               ),
                             ),
@@ -322,15 +389,26 @@ class _homeState extends State<home> {
                               value: "completed",
                               padding: EdgeInsets.only(),
                               child: SizedBox(
-                                child: TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    primary: Colors.green,
-                                  ),
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.done,
-                                  ),
-                                  label: Text("COMPLETED"),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(
+                                      "COMPLETED",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green[600],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Icon(
+                                      Icons.done,
+                                      color: Colors.green[600],
+                                    )
+                                  ],
                                 ),
                               ),
                             )
@@ -344,6 +422,84 @@ class _homeState extends State<home> {
             );
           }
         },
+      ),
+    );
+  }
+
+  Drawer buildDrawer() {
+    return Drawer(
+      child: ListView(
+        children: [
+          DrawerHeader(
+            child: Icon(
+              Icons.person_pin,
+              size: 140,
+            ),
+          ),
+          Center(
+            child: Text(
+              FirebaseAuth.instance.currentUser!.phoneNumber
+                  .toString()
+                  .substring(2, 12),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "Points - " + points.toString(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          Center(
+            child: LottieBuilder.asset(
+              "assets/lotties/productive.json",
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Center(
+            child: Text(
+              "Be Productive and Acheive your goals",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Get.to(() => MotivationVideo());
+              },
+              child: Text("MOTIVATE ME"),
+            ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Text("HELPPIER", style: TextStyle(color: Colors.grey)),
+          ),
+        ],
       ),
     );
   }

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
-import 'package:scheduler_flutter/bottomnavigationbar.dart';
 import 'package:scheduler_flutter/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // import 'firestore';
@@ -62,7 +58,23 @@ void storeTokenAndData(UserCredential userCredential) async {
       'title': "Demo Title",
       'description': "demo description",
       'time': time,
+      'regular': false,
     });
+
+    try {
+      var points = FirebaseFirestore.instance.collection('points').doc(uid);
+      await points.get().then((value) {
+        if (value.exists) {
+          print("exist");
+        } else {
+          FirebaseFirestore.instance.collection('points').doc(uid).set({
+            'points': 0,
+          });
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
   }
   sharedPreferences.setString(
       "token", userCredential.credential?.token.toString() ?? " ");
@@ -79,7 +91,7 @@ Future<void> signInwithPhoneNumber(
         await firebaseAuth.signInWithCredential(credential);
     storeTokenAndData(userCredential);
     Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => home()), (route) => false);
+        MaterialPageRoute(builder: (context) => Home()), (route) => false);
     showSnackBar(context, "logged In");
   } catch (e) {
     showSnackBar(context, e.toString());

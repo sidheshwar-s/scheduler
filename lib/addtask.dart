@@ -12,14 +12,14 @@ import 'package:multi_select_flutter/multi_select_flutter.dart';
 final FlutterLocalNotificationsPlugin fltrNotification =
     new FlutterLocalNotificationsPlugin();
 
-class addtask extends StatefulWidget {
-  const addtask({Key? key}) : super(key: key);
+class AddTask extends StatefulWidget {
+  const AddTask({Key? key}) : super(key: key);
 
   @override
-  _addtaskState createState() => _addtaskState();
+  _AddTaskState createState() => _AddTaskState();
 }
 
-class _addtaskState extends State<addtask> {
+class _AddTaskState extends State<AddTask> {
   bool? checkedValue = true;
   DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm");
   TextEditingController title = TextEditingController();
@@ -73,7 +73,6 @@ class _addtaskState extends State<addtask> {
 
   @override
   void initState() {
-    // TODO: implement initState
     print(checkedValue);
     var androidInitilize =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -84,6 +83,7 @@ class _addtaskState extends State<addtask> {
     fltrNotification.initialize(
       initilizationsSettings,
     );
+    super.initState();
   }
 
   Future _showNotification(
@@ -99,7 +99,7 @@ class _addtaskState extends State<addtask> {
     fltrNotification.schedule(
       id,
       "Reminder!",
-      "${isScheduled ? "task with title ${title} will be over within ${endTime.difference(t).inMinutes} minutes" : "your task with title ${title} has passed at ${t.hour}: ${t.minute}"}",
+      "${isScheduled ? "$title within ${endTime.difference(t).inMinutes} minutes" : "your task with title $title has passed at ${t.hour}: ${t.minute}"}",
       scheduledTime,
       generalNotificationDetails,
     );
