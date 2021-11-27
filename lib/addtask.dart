@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 final FlutterLocalNotificationsPlugin fltrNotification =
     new FlutterLocalNotificationsPlugin();
@@ -23,10 +24,13 @@ class addtask extends StatefulWidget {
 }
 
 class _addtaskState extends State<addtask> {
+  bool? checkedValue = true;
   DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm");
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
-  // final control = GlobalKey();
+  static List time = ["1 hour", "45 mins", "30 mins", "15 mins"];
+  var _items =
+      time.map((time1) => MultiSelectItem<String>(time1, time1)).toList();
   DateTime datetime = DateTime.now();
   addtasktofirebase() async {
     try {
@@ -54,7 +58,7 @@ class _addtaskState extends State<addtask> {
   @override
   void initState() {
     // TODO: implement initState
-
+    print(checkedValue);
     var androidInitilize =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
     var iOSinitilize = new IOSInitializationSettings();
@@ -124,37 +128,29 @@ class _addtaskState extends State<addtask> {
               ))
         ],
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 4,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  // color: Colors.white,
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 50),
+                Container(
+                  // color: Colors.blue,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 3,
+                  decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.circular(15.0),
+                    image: DecorationImage(
+                      image: AssetImage('assets/welcome5.png'),
+                      fit: BoxFit.fill,
+                      alignment: Alignment.center,
+                    ),
+                  ),
                 ),
-                // color: Colors.white,
-                height: 60,
-                width: MediaQuery.of(context).size.width / 1.1,
-                child: TextFormField(
-                  controller: title,
-                  keyboardType: TextInputType.text,
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                      hintText: "Enter the Title",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 18.0),
-                child: Container(
+                Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     // color: Colors.white,
@@ -163,92 +159,167 @@ class _addtaskState extends State<addtask> {
                   height: 60,
                   width: MediaQuery.of(context).size.width / 1.1,
                   child: TextFormField(
-                    controller: description,
+                    controller: title,
                     keyboardType: TextInputType.text,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                        hintText: "Enter the Description",
+                        hintText: "Enter the Title",
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10))),
                   ),
                 ),
-              ),
-              // TextButton(
-              //     onPressed: () {
-              //       DatePicker.showDatePicker(context,
-              //           showTitleActions: true,
-              //           minTime: DateTime.now(),
-              //           maxTime: DateTime(2022, 6, 7), onChanged: (date) {
-              //         print('change $date');
-              //       }, onConfirm: (date) {
-              //         print('confirm $date');
-              //       }, currentTime: DateTime.now(), locale: LocaleType.en);
-              //     },
-              //     child: Text(
-              //       'show date time picker (Chinese)',
-              //       style: TextStyle(color: Colors.blue),
-              //     ))
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Pick your deadline"),
+                Padding(
+                  padding: const EdgeInsets.only(top: 18.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      // color: Colors.white,
+                    ),
+                    // color: Colors.white,
+                    height: 60,
+                    width: MediaQuery.of(context).size.width / 1.1,
+                    child: TextFormField(
+                      controller: description,
+                      keyboardType: TextInputType.text,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                          hintText: "Enter the Description",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    ),
+                  ),
                 ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                child: DateTimePicker(
-                  // key: control,
-                  type: DateTimePickerType.dateTimeSeparate,
-                  dateMask: 'd MMM, yyyy',
-                  initialValue: DateTime.now().toString(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                  icon: Icon(Icons.event),
-                  dateLabelText: 'Date',
-                  timeLabelText: "Hour",
-                  // selectableDayPredicate: (DateTime date) {
-                  //   // Disable weekend days to select from the calendar
-                  //   if (date.weekday == 5 || date.weekday == 7) {
-                  //     return false;
-                  //   }
+                // TextButton(
+                //     onPressed: () {
+                //       DatePicker.showDatePicker(context,
+                //           showTitleActions: true,
+                //           minTime: DateTime.now(),
+                //           maxTime: DateTime(2022, 6, 7), onChanged: (date) {
+                //         print('change $date');
+                //       }, onConfirm: (date) {
+                //         print('confirm $date');
+                //       }, currentTime: DateTime.now(), locale: LocaleType.en);
+                //     },
+                //     child: Text(
+                //       'show date time picker (Chinese)',
+                //       style: TextStyle(color: Colors.blue),
+                //     ))
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Pick your deadline :",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10),
+                  child: DateTimePicker(
+                    // key: control,
+                    type: DateTimePickerType.dateTimeSeparate,
+                    dateMask: 'd MMM, yyyy',
+                    initialValue: DateTime.now().toString(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                    icon: Icon(Icons.event),
+                    dateLabelText: 'Date',
+                    timeLabelText: "Hour",
+                    // selectableDayPredicate: (DateTime date) {
+                    //   // Disable weekend days to select from the calendar
+                    //   if (date.weekday == 5 || date.weekday == 7) {
+                    //     return false;
+                    //   }
 
-                  //   return true;
-                  // },
-                  onChanged: (val) {
-                    print(val);
-                    print("**********");
-                    setState(() {
-                      DateTime dateTime = dateFormat.parse(val);
-                      print("hgvvu**********");
-                      print(dateTime);
+                    //   return true;
+                    // },
+                    onChanged: (val) {
+                      print(val);
                       print("**********");
-                      datetime = dateTime;
-                    });
-                    DateTime dateTime = dateFormat.parse(val);
-                    print(dateTime);
-                    print(DateTime.now());
-                    print(dateTime.hour);
-                  },
-                  validator: (val) {
-                    print(val);
-                    return "please select a date";
-                  },
-                  onSaved: (val) {
-                    print(val);
-                    print("**********");
-                    DateTime dateTime =
-                        dateFormat.parse(val ?? "2019-07-19 8:40");
-                    print(dateTime);
-                  },
+                      setState(() {
+                        DateTime dateTime = dateFormat.parse(val);
+                        print("hgvvu**********");
+                        print(dateTime);
+                        print("**********");
+                        datetime = dateTime;
+                      });
+                      DateTime dateTime = dateFormat.parse(val);
+                      print(dateTime);
+                      print(DateTime.now());
+                      print(dateTime.hour);
+                    },
+                    validator: (val) {
+                      print(val);
+                      return "please select a date";
+                    },
+                    onSaved: (val) {
+                      print(val);
+                      print("**********");
+                      DateTime dateTime =
+                          dateFormat.parse(val ?? "2019-07-19 8:40");
+                      print(dateTime);
+                    },
+                  ),
+                )
+                // Checkbox(value: value, onChanged: onChanged)
+                ,
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: CheckboxListTile(
+                    activeColor: Colors.black,
+
+                    title: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        "Do you want to schedule the task Regularly?",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    value: checkedValue,
+                    onChanged: (newValue) {
+                      setState(() {
+                        checkedValue = newValue;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity
+                        .leading, //  <-- leading Checkbox
+                  ),
                 ),
-              )
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 18.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / 1.1,
+                    child: MultiSelectChipField(
+                      items: _items,
+                      initialValue: [time[0], time[1], time[2], time[3]],
+                      title: Text("When Do you want reminders",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
+                      headerColor: Color(0xffFF6363),
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Color(0xffFF6363), width: 1.8),
+                      ),
+                      selectedChipColor: Color(0xffFF6363),
+                      selectedTextStyle: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold
+                          // onTap: (values) {},
+                          ),
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

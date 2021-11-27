@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 import 'dart:io';
 import 'dart:async';
-// import 'config.dart';
-
 import 'dart:convert';
 
 import 'package:scheduler_flutter/home.dart';

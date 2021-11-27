@@ -40,6 +40,7 @@ dependencies:
   flutter_local_notifications: ^8.2.0
   google_fonts: ^2.1.0
   intl: ^0.17.0
+  multi_select_flutter: ^4.0.0
   otp_text_field: ^1.1.1
   shared_preferences: ^2.0.7
   table_calendar: ^3.0.2
@@ -62,6 +63,7 @@ flutter:
     - assets/welcome2.png
     - assets/welcome3.png
     - assets/welcome4.png
+    - assets/welcome5.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see
