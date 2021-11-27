@@ -2,7 +2,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:scheduler_flutter/Signin.dart';
@@ -456,7 +455,7 @@ class _HomeState extends State<Home> {
             child: Text(
               FirebaseAuth.instance.currentUser!.phoneNumber
                   .toString()
-                  .substring(2, 12),
+                  .substring(3, 13),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,

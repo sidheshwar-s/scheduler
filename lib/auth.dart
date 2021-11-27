@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:scheduler_flutter/bottomnavigationbar.dart';
 import 'package:scheduler_flutter/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,7 @@ Future verification(String str, BuildContext context, Function setdata) async {
   };
   PhoneVerificationFailed verificationFailed =
       (FirebaseAuthException exception) {
-    showSnackBar(context, exception.toString());
+    showSnackBar(context, exception.message!);
   };
   PhoneCodeSent codeSent = (String verificationID, [int? forceResnedingtoken]) {
     showSnackBar(context, "Verification Code sent on the phone number");
@@ -90,10 +91,14 @@ Future<void> signInwithPhoneNumber(
     UserCredential userCredential =
         await firebaseAuth.signInWithCredential(credential);
     storeTokenAndData(userCredential);
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => Home()), (route) => false);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyBottomBarDemo(),
+        ),
+        (route) => false);
     showSnackBar(context, "logged In");
-  } catch (e) {
-    showSnackBar(context, e.toString());
+  } on FirebaseException catch (e) {
+    showSnackBar(context, e.message!);
   }
 }
