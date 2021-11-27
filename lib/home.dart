@@ -1,16 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:scheduler_flutter/Signin.dart';
 import 'package:scheduler_flutter/addtask.dart';
 import 'package:scheduler_flutter/main.dart';
-import 'home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -163,8 +160,9 @@ class _homeState extends State<home> {
               itemCount: docs1!.length,
               itemBuilder: (context, index) {
                 if (DateTime.now()
-                        .compareTo(DateTime.parse(docs1?[index]['time'])) >
-                    0) {
+                            .compareTo(DateTime.parse(docs1?[index]['time'])) >
+                        0 &&
+                    docs1![index]['regular'] != true) {
                   FirebaseFirestore.instance
                       .collection('tasks')
                       .doc(uid)
@@ -173,100 +171,174 @@ class _homeState extends State<home> {
                       .delete()
                       .then((value) => print("success"));
                 }
+
                 var time = DateTime.parse(docs1![index]['time']);
                 for (int i = 0; i < docs1!.length.toInt(); i++) {
                   _showNotification(
                       DateTime.parse(docs1![i]['time']), docs1![i]['title']);
                 }
-                return Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: SizedBox(
-                    child: InkWell(
-                      onTap: () {},
-                      child: Card(
-                        semanticContainer: true,
-                        color: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        margin: EdgeInsets.only(bottom: 10),
-                        // decoration: BoxDecoration(
-                        //     color: Colors.blue,
-                        //     borderRadius: BorderRadius.circular(10)),
-                        // height: 90,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                        margin: EdgeInsets.only(left: 20),
-                                        child: Text(
-                                          "Title : ${docs1![index]['title']}",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
-                                        )),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                        width: 320,
-                                        margin: EdgeInsets.only(left: 20),
-                                        child: Text(
-                                          "Description : ${docs1![index]['description']}",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
-                                        )),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      margin: EdgeInsets.only(left: 20),
-                                      child: Text(
-                                        DateFormat.yMd().add_jm().format(time),
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-
-                                      // DateFormat.yMd().add_jm().format(time)));
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                  ]),
+                print(docs1![index]['regular']);
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: SizedBox(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Card(
+                            semanticContainer: true,
+                            color: docs1![index]['regular'] == true
+                                ? Color(0xff5cdb95)
+                                : Color(0xffe7717d),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
-                            Container(
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.delete,
+                            margin: EdgeInsets.only(bottom: 10),
+                            // decoration: BoxDecoration(
+                            //     color: Colors.blue,
+                            //     borderRadius: BorderRadius.circular(10)),
+                            // height: 90,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Container(
+                                            margin: EdgeInsets.only(left: 20),
+                                            child: Text(
+                                              "Title : ${docs1![index]['title']}",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Container(
+                                            width: 320,
+                                            margin: EdgeInsets.only(left: 20),
+                                            child: Text(
+                                              "Description : ${docs1![index]['description']}",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(left: 20),
+                                          child: Text(
+                                            docs1![index]['regular']
+                                                ? "${DateFormat.jm().format(time)}"
+                                                : "${DateFormat.yMd().add_jm().format(time)}",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                          child: Text(
+                                            "${docs1![index]['regular'] ? "Regular task" : "Particular task"}",
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+
+                                        // DateFormat.yMd().add_jm().format(time)));
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                      ]),
                                 ),
-                                onPressed: () async {
-                                  print(docs1![index]['time']);
-                                  await FirebaseFirestore.instance
-                                      .collection('tasks')
-                                      .doc(uid)
-                                      .collection('mytasks')
-                                      .doc(docs1![index]['time'])
-                                      .delete()
-                                      .then((value) => print("success"));
-                                },
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 0,
+                      child: SizedBox(
+                        child: PopupMenuButton(
+                          onSelected: (value) async {
+                            if (value == "delete") {
+                              await FirebaseFirestore.instance
+                                  .collection('tasks')
+                                  .doc(uid)
+                                  .collection('mytasks')
+                                  .doc(docs1![index]['time'])
+                                  .delete()
+                                  .then((value) => print("success"));
+                            } else {
+                              // TODO: mark of complete
+                            }
+                          },
+                          offset: Offset(-15, 5),
+                          padding: EdgeInsets.only(),
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: "delete",
+                              padding: EdgeInsets.only(),
+                              child: SizedBox(
+                                child: TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                    primary: Colors.black,
+                                  ),
+                                  onPressed: () async {
+                                    print(docs1![index]['time']);
+                                    await FirebaseFirestore.instance
+                                        .collection('tasks')
+                                        .doc(uid)
+                                        .collection('mytasks')
+                                        .doc(docs1![index]['time'])
+                                        .delete()
+                                        .then((value) => print("success"));
+                                  },
+                                  icon: Icon(
+                                    Icons.delete,
+                                  ),
+                                  label: Text("DELETE"),
+                                ),
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: "completed",
+                              padding: EdgeInsets.only(),
+                              child: SizedBox(
+                                child: TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                    primary: Colors.green,
+                                  ),
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.done,
+                                  ),
+                                  label: Text("COMPLETED"),
+                                ),
                               ),
                             )
                           ],
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 );
               },
             );

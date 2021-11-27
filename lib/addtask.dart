@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:intl/intl.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:scheduler_flutter/models/Time.dart';
-import 'home.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
@@ -62,6 +57,7 @@ class _addtaskState extends State<addtask> {
       });
       // Fluttertoast.showToast(msg: 'Data Added');
       print(selectedSchedules);
+
       selectedSchedules.forEach((value) {
         print(value);
         DateTime newTime = datetime.subtract(Duration(minutes: value.time));
