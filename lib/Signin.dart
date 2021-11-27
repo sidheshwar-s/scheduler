@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'dart:ui';
 import 'auth.dart';
 import 'dart:async';
@@ -65,7 +66,8 @@ class _SignInState extends State<SignIn> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: MediaQuery.of(context).size.height / 4.5,
+                    height: MediaQuery.of(context).size.height / 2.8,
+                    child: LottieBuilder.asset("assets/lotties/auth.json"),
                   ),
                   Container(
                     decoration: BoxDecoration(
