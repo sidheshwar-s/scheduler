@@ -456,7 +456,7 @@ class _HomeState extends State<Home> {
             child: Text(
               FirebaseAuth.instance.currentUser!.phoneNumber
                   .toString()
-                  .substring(2, 12),
+                  .substring(3, 13),
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,

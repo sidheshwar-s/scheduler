@@ -14,7 +14,7 @@ class _MyBottomBarDemoState extends State<MyBottomBarDemo> {
 
   List<Widget> tabPages = [
     Home(),
-    MotivationVideo()
+    MotivationVideo(),
     // calender(),
   ];
 
