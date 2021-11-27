@@ -87,21 +87,21 @@ class _homeState extends State<home> {
         generalNotificationDetails);
   }
 
-  void testNotify() {
-    flutterLocalNotificationsPlugin.show(
-        1213,
-        "Test",
-        "body",
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channel.description,
-          color: Colors.blue,
-          playSound: true,
-          icon: '@mipmap/ic_launcher',
-        )));
-  }
+  // void testNotify() {
+  //   flutterLocalNotificationsPlugin.show(
+  //       1213,
+  //       "Test",
+  //       "body",
+  //       NotificationDetails(
+  //           android: AndroidNotificationDetails(
+  //         channel.id,
+  //         channel.name,
+  //         channel.description,
+  //         color: Colors.blue,
+  //         playSound: true,
+  //         icon: '@mipmap/ic_launcher',
+  //       )));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +132,7 @@ class _homeState extends State<home> {
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: Colors.black,
           onPressed: () {
-            testNotify();
+            // testNotify();
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => addtask()));
           },
