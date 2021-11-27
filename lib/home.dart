@@ -71,7 +71,7 @@ class _homeState extends State<home> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text(
-          "TODO List",
+          "Scheduler",
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
