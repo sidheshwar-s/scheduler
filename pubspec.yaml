@@ -43,6 +43,7 @@ dependencies:
   otp_text_field: ^1.1.1
   shared_preferences: ^2.0.7
   table_calendar: ^3.0.2
+  firebase_messaging: ^11.1.0
 
 dev_dependencies:
   flutter_test:
