@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:ui';
 import 'auth.dart';
 import 'dart:async';
@@ -23,9 +24,10 @@ class _signinState extends State<signin> {
   String buttoname = "Send";
   String verificationIdFinal = "";
   String smsCode = "";
+  late Timer _timer;
   void startTimer() {
     const onsec = Duration(seconds: 1);
-    Timer _timer = Timer.periodic(onsec, (timer) {
+    _timer = Timer.periodic(onsec, (timer) {
       if (start == 0) {
         setState(() {
           timer.cancel();
@@ -43,8 +45,8 @@ class _signinState extends State<signin> {
   @override
   void dispose() {
     phone.dispose();
+    _timer.cancel();
     super.dispose();
-    // _timer.dispose();
   }
 
   @override
@@ -80,8 +82,11 @@ class _signinState extends State<signin> {
                     child: TextFormField(
                       keyboardType: TextInputType.number,
                       textAlignVertical: TextAlignVertical.center,
+                      maxLength: 10,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
                       controller: phone,
                       decoration: InputDecoration(
+                          counterText: "",
                           suffixIcon: TextButton(
                             child: Text(
                               "${buttoname}",
@@ -90,6 +95,9 @@ class _signinState extends State<signin> {
                             onPressed: wait
                                 ? null
                                 : () {
+                                    if (!mounted) {
+                                      return;
+                                    }
                                     startTimer();
                                     setState(() {
                                       start = 30;
@@ -179,7 +187,7 @@ class _signinState extends State<signin> {
                     )),
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height / 4,
+                    height: 30,
                   ),
                   Container(
                     height: MediaQuery.of(context).size.height / 17,

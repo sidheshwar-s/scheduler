@@ -102,67 +102,65 @@ class _homeState extends State<home> {
               // Icon(Icons.add),
               Padding(
             padding: const EdgeInsets.only(left: 10.0),
-            child: Text("Add Event"),
+            child: Text("Add task"),
           )),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('tasks')
-              .doc(uid)
-              .collection('mytasks')
-              .orderBy("time", descending: false)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              docs1 = snapshot.data?.docs;
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('tasks')
+            .doc(uid)
+            .collection('mytasks')
+            .orderBy("time", descending: false)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            docs1 = snapshot.data?.docs;
 
-              int t = docs1!.length;
-              return ListView.builder(
-                itemCount: docs1!.length,
-                itemBuilder: (context, index) {
-                  if (DateTime.now()
-                          .compareTo(DateTime.parse(docs1?[index]['time'])) >
-                      0) {
-                    FirebaseFirestore.instance
-                        .collection('tasks')
-                        .doc(uid)
-                        .collection('mytasks')
-                        .doc(docs1?[index]['time'])
-                        .delete()
-                        .then((value) => print("success"));
-                  }
-                  var time = DateTime.parse(docs1![index]['time']);
-                  for (int i = 0; i < docs1!.length.toInt(); i++) {
-                    _showNotification(
-                        DateTime.parse(docs1![i]['time']), docs1![i]['title']);
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: InkWell(
-                        onTap: () {},
-                        child: Card(
-                          semanticContainer: true,
-                          color: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          margin: EdgeInsets.only(bottom: 10),
-                          // decoration: BoxDecoration(
-                          //     color: Colors.blue,
-                          //     borderRadius: BorderRadius.circular(10)),
-                          // height: 90,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
+            int t = docs1!.length;
+            return ListView.builder(
+              itemCount: docs1!.length,
+              itemBuilder: (context, index) {
+                if (DateTime.now()
+                        .compareTo(DateTime.parse(docs1?[index]['time'])) >
+                    0) {
+                  FirebaseFirestore.instance
+                      .collection('tasks')
+                      .doc(uid)
+                      .collection('mytasks')
+                      .doc(docs1?[index]['time'])
+                      .delete()
+                      .then((value) => print("success"));
+                }
+                var time = DateTime.parse(docs1![index]['time']);
+                for (int i = 0; i < docs1!.length.toInt(); i++) {
+                  _showNotification(
+                      DateTime.parse(docs1![i]['time']), docs1![i]['title']);
+                }
+                return Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SizedBox(
+                    child: InkWell(
+                      onTap: () {},
+                      child: Card(
+                        semanticContainer: true,
+                        color: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        margin: EdgeInsets.only(bottom: 10),
+                        // decoration: BoxDecoration(
+                        //     color: Colors.blue,
+                        //     borderRadius: BorderRadius.circular(10)),
+                        // height: 90,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 2,
+                              child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -207,32 +205,34 @@ class _homeState extends State<home> {
                                       height: 10,
                                     ),
                                   ]),
-                              Container(
-                                  child: IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                      ),
-                                      onPressed: () async {
-                                        print(docs1![index]['time']);
-                                        await FirebaseFirestore.instance
-                                            .collection('tasks')
-                                            .doc(uid)
-                                            .collection('mytasks')
-                                            .doc(docs1![index]['time'])
-                                            .delete()
-                                            .then((value) => print("success"));
-                                      }))
-                            ],
-                          ),
+                            ),
+                            Container(
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                ),
+                                onPressed: () async {
+                                  print(docs1![index]['time']);
+                                  await FirebaseFirestore.instance
+                                      .collection('tasks')
+                                      .doc(uid)
+                                      .collection('mytasks')
+                                      .doc(docs1![index]['time'])
+                                      .delete()
+                                      .then((value) => print("success"));
+                                },
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ),
-                  );
-                },
-              );
-            }
-          },
-        ),
+                  ),
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

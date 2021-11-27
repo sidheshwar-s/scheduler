@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:scheduler_flutter/bottomnavigationbar.dart';
 import 'package:scheduler_flutter/getstarted.dart';
+import 'package:scheduler_flutter/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,7 +27,7 @@ Future<void> main() async {
     ),
     home: Scaffold(
       body: token == null ? startingscreen() : MyBottomBarDemo(),
-      // body: uid == null ? startingscreen() : home(),
+      // body: token == null ? startingscreen() : home(),
     ),
   ));
 }

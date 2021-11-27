@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:scheduler_flutter/bottomnavigationbar.dart';
+import 'package:scheduler_flutter/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -52,16 +53,16 @@ void storeTokenAndData(UserCredential userCredential) async {
     User? user = FirebaseAuth.instance.currentUser;
     String uid = user!.uid;
     var time = DateTime.now().add(Duration(hours: i + 1)).toString();
-    // await FirebaseFirestore.instance
-    //     .collection('tasks')
-    //     .doc(uid)
-    //     .collection('mytasks')
-    //     .doc(time)
-    //     .set({
-    //   'title': "Demo Title",
-    //   'description': "demo description",
-    //   'time': time,
-    // });
+    await FirebaseFirestore.instance
+        .collection('tasks')
+        .doc(uid)
+        .collection('mytasks')
+        .doc(time)
+        .set({
+      'title': "Demo Title",
+      'description': "demo description",
+      'time': time,
+    });
   }
   sharedPreferences.setString(
       "token", userCredential.credential?.token.toString() ?? " ");
@@ -77,10 +78,8 @@ Future<void> signInwithPhoneNumber(
     UserCredential userCredential =
         await firebaseAuth.signInWithCredential(credential);
     storeTokenAndData(userCredential);
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => MyBottomBarDemo()),
-        (route) => false);
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => home()), (route) => false);
     showSnackBar(context, "logged In");
   } catch (e) {
     showSnackBar(context, e.toString());

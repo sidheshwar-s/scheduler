@@ -29,22 +29,26 @@ class _addtaskState extends State<addtask> {
   // final control = GlobalKey();
   DateTime datetime = DateTime.now();
   addtasktofirebase() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    String uid = user!.uid;
-    // var time = DateTime.now();
-    await FirebaseFirestore.instance
-        .collection('tasks')
-        .doc(uid)
-        .collection('mytasks')
-        .doc(datetime.toString())
-        .set({
-      'title': title.text,
-      'description': description.text,
-      'time': datetime.toString(),
-    });
-    // Fluttertoast.showToast(msg: 'Data Added');
-    _showNotification(datetime, title.text);
-    Navigator.pop(context);
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      String uid = user!.uid;
+      // var time = DateTime.now();
+      await FirebaseFirestore.instance
+          .collection('tasks')
+          .doc(uid)
+          .collection('mytasks')
+          .doc(datetime.toString())
+          .set({
+        'title': title.text,
+        'description': description.text,
+        'time': datetime.toString(),
+      });
+      // Fluttertoast.showToast(msg: 'Data Added');
+      _showNotification(datetime, title.text);
+      Navigator.pop(context);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -71,11 +75,12 @@ class _addtaskState extends State<addtask> {
         new NotificationDetails(android: androidDetails, iOS: iSODetails);
     var scheduledTime = t;
     fltrNotification.schedule(
-        1,
-        "Reminder",
-        "your task with title ${title} has passed at ${t.hour}: ${t.minute}",
-        scheduledTime,
-        generalNotificationDetails);
+      1,
+      "Reminder",
+      "your task with title ${title} has passed at ${t.hour}: ${t.minute}",
+      scheduledTime,
+      generalNotificationDetails,
+    );
   }
 
   @override
@@ -91,23 +96,27 @@ class _addtaskState extends State<addtask> {
         actions: [
           TextButton(
               onPressed: () {
-                User? user = FirebaseAuth.instance.currentUser;
-                String uid = user!.uid;
+                try {
+                  User? user = FirebaseAuth.instance.currentUser;
+                  String uid = user!.uid;
 
-                CollectionReference notesItemCollection = FirebaseFirestore
-                    .instance
-                    .collection('tasks')
-                    .doc(uid)
-                    .collection('mytasks');
-                print("***************");
+                  CollectionReference notesItemCollection = FirebaseFirestore
+                      .instance
+                      .collection('tasks')
+                      .doc(uid)
+                      .collection('mytasks');
+                  print("***************");
 
-                notesItemCollection.get().then((snapshot) {
-                  snapshot.docs.forEach((doc) {
-                    print(doc.get('title'));
+                  notesItemCollection.get().then((snapshot) {
+                    snapshot.docs.forEach((doc) {
+                      print(doc.get('title'));
+                    });
                   });
-                });
-                print("***************");
-                addtasktofirebase();
+                  print("***************");
+                  addtasktofirebase();
+                } catch (e) {
+                  print(e);
+                }
               },
               child: Text(
                 "Save",
@@ -179,52 +188,65 @@ class _addtaskState extends State<addtask> {
               //       'show date time picker (Chinese)',
               //       style: TextStyle(color: Colors.blue),
               //     ))
-              DateTimePicker(
-                // key: control,
-                type: DateTimePickerType.dateTimeSeparate,
-                dateMask: 'd MMM, yyyy',
-                initialValue: DateTime.now().toString(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-                icon: Icon(Icons.event),
-                dateLabelText: 'Date',
-                timeLabelText: "Hour",
-                // selectableDayPredicate: (DateTime date) {
-                //   // Disable weekend days to select from the calendar
-                //   if (date.weekday == 5 || date.weekday == 7) {
-                //     return false;
-                //   }
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text("Pick your deadline"),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+                child: DateTimePicker(
+                  // key: control,
+                  type: DateTimePickerType.dateTimeSeparate,
+                  dateMask: 'd MMM, yyyy',
+                  initialValue: DateTime.now().toString(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                  icon: Icon(Icons.event),
+                  dateLabelText: 'Date',
+                  timeLabelText: "Hour",
+                  // selectableDayPredicate: (DateTime date) {
+                  //   // Disable weekend days to select from the calendar
+                  //   if (date.weekday == 5 || date.weekday == 7) {
+                  //     return false;
+                  //   }
 
-                //   return true;
-                // },
-                onChanged: (val) {
-                  print(val);
-                  print("**********");
-                  setState(() {
-                    DateTime dateTime =
-                        dateFormat.parse(val ?? DateTime.now().toString());
-                    print("hgvvu**********");
-                    print(dateTime);
+                  //   return true;
+                  // },
+                  onChanged: (val) {
+                    print(val);
                     print("**********");
-                    datetime = dateTime;
-                  });
-                  DateTime dateTime =
-                      dateFormat.parse(val ?? DateTime.now().toString());
-                  print(dateTime);
-                  print(DateTime.now());
-                  print(dateTime.hour);
-                },
-                validator: (val) {
-                  print(val);
-                  return "please select a date";
-                },
-                onSaved: (val) {
-                  print(val);
-                  print("**********");
-                  DateTime dateTime =
-                      dateFormat.parse(val ?? "2019-07-19 8:40");
-                  print(dateTime);
-                },
+                    setState(() {
+                      DateTime dateTime = dateFormat.parse(val);
+                      print("hgvvu**********");
+                      print(dateTime);
+                      print("**********");
+                      datetime = dateTime;
+                    });
+                    DateTime dateTime = dateFormat.parse(val);
+                    print(dateTime);
+                    print(DateTime.now());
+                    print(dateTime.hour);
+                  },
+                  validator: (val) {
+                    print(val);
+                    return "please select a date";
+                  },
+                  onSaved: (val) {
+                    print(val);
+                    print("**********");
+                    DateTime dateTime =
+                        dateFormat.parse(val ?? "2019-07-19 8:40");
+                    print(dateTime);
+                  },
+                ),
               )
             ],
           ),
